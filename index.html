@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Coletar Recompensa</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #1d1f21, #2c2f33);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      text-align: center;
+      background-color: #2f3136;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    }
+
+    button {
+      padding: 15px 30px;
+      font-size: 18px;
+      background-color: #7289da;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #5b6eae;
+    }
+
+    #mensagem {
+      margin-top: 20px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Recompensa Diária</h1>
+    <button id="coletarBtn">Coletar</button>
+    <p id="mensagem"></p>
+  </div>
+
+  <script>
+    const coletarBtn = document.getElementById('coletarBtn');
+    const mensagem = document.getElementById('mensagem');
+
+    coletarBtn.addEventListener('click', () => {
+      coletarBtn.disabled = true;
+      coletarBtn.textContent = 'Coletado!';
+      mensagem.textContent = 'Você recebeu 100 moedas!';
+      mensagem.style.color = '#43b581'; // verde
+    });
+  </script>
+</body>
+</html>
