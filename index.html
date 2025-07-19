@@ -2,65 +2,79 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>Coletar Recompensa</title>
+  <title>Imagem 3D</title>
   <style>
     body {
       margin: 0;
-      padding: 0;
-      font-family: 'Arial', sans-serif;
-      background: linear-gradient(135deg, #1d1f21, #2c2f33);
-      color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+      background: #111;
+      overflow: hidden;
     }
-
-    .container {
-      text-align: center;
-      background-color: #2f3136;
-      padding: 40px;
-      border-radius: 12px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-    }
-
-    button {
-      padding: 15px 30px;
-      font-size: 18px;
-      background-color: #7289da;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-
-    button:hover {
-      background-color: #5b6eae;
-    }
-
-    #mensagem {
-      margin-top: 20px;
-      font-size: 16px;
+    canvas {
+      display: block;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Recompensa Diária</h1>
-    <button id="coletarBtn">Coletar</button>
-    <p id="mensagem"></p>
-  </div>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.153.0/build/three.min.js"></script>
 
   <script>
-    const coletarBtn = document.getElementById('coletarBtn');
-    const mensagem = document.getElementById('mensagem');
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(
+      75,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
+    );
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
 
-    coletarBtn.addEventListener('click', () => {
-      coletarBtn.disabled = true;
-      coletarBtn.textContent = 'Coletado!';
-      mensagem.textContent = 'Você recebeu 100 moedas!';
-      mensagem.style.color = '#43b581'; // verde
+    // Luz
+    const light = new THREE.DirectionalLight(0xffffff, 1);
+    light.position.set(0, 1, 1).normalize();
+    scene.add(light);
+
+    // Textura da imagem
+    const loader = new THREE.TextureLoader();
+    loader.load("https://i.imgur.com/s9Yj4qK.jpg", function (texture) {
+      const geometry = new THREE.PlaneGeometry(6, 4, 40, 40);
+
+      // Adiciona curvatura (efeito 3D real)
+      const position = geometry.attributes.position;
+      for (let i = 0; i < position.count; i++) {
+        const y = position.getY(i);
+        const curve = Math.sin((y / 4) * Math.PI) * 0.3;
+        position.setZ(i, curve);
+      }
+
+      geometry.computeVertexNormals();
+
+      const material = new THREE.MeshStandardMaterial({
+        map: texture,
+        roughness: 0.7,
+        metalness: 0.1,
+      });
+
+      const mesh = new THREE.Mesh(geometry, material);
+      scene.add(mesh);
+
+      camera.position.z = 7;
+
+      // Mouse move
+      document.addEventListener("mousemove", (event) => {
+        const mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+        const mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+
+        mesh.rotation.y = mouseX * 0.5;
+        mesh.rotation.x = mouseY * 0.3;
+      });
+
+      function animate() {
+        requestAnimationFrame(animate);
+        renderer.render(scene, camera);
+      }
+
+      animate();
     });
   </script>
 </body>
